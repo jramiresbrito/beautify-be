@@ -76,6 +76,7 @@ class User extends Model {
         .when('password', (password, field) =>
           password ? field.required().oneOf([yup.ref('password')]) : field
         ),
+      avatar_id: yup.number(),
     });
 
     return schema.isValid(user);
@@ -97,6 +98,10 @@ class User extends Model {
     });
 
     return schema.isValid(user);
+  }
+
+  static associate(models) {
+    this.belongsTo(models.File, { foreignKey: 'avatar_id', as: 'avatar' });
   }
 
   checkPassword(password) {

@@ -1,4 +1,5 @@
 import User from '../models/User';
+import File from '../models/File';
 
 class UserController {
   async show(req, res) {
@@ -45,7 +46,7 @@ class UserController {
     const user = await User.findByPk(req.userId);
     if (!user) return res.status(400).json({ error: 'Invalid User ID.' });
 
-    const { email, oldPassword, password } = req.body;
+    const { email, oldPassword, password, avatar_id } = req.body;
     if (email && email !== user.email) {
       const emailInUse = await User.findOne({ where: { email } });
       if (emailInUse) return res.status(400).json({ error: 'E-mail in use.' });
@@ -57,9 +58,18 @@ class UserController {
     if (oldPassword && !(await user.checkPassword(oldPassword)))
       return res.status(401).json({ error: 'Old Password does not match.' });
 
+    if (avatar_id) {
+      const fileExists = await File.findByPk(avatar_id);
+
+      if (!fileExists)
+        return res
+          .status(400)
+          .json({ error: 'The File with the given ID was not found.' });
+    }
+
     const { id, name, provider } = await user.update(req.body);
 
-    return res.json({ id, name, email, provider });
+    return res.json({ id, name, email, provider, avatar_id });
   }
 }
 
