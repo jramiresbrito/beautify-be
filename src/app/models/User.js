@@ -81,7 +81,27 @@ class User extends Model {
     return schema.isValid(user);
   }
 
-  password_hash() {}
+  static validateUserSession(user) {
+    const schema = yup.object().shape({
+      email: yup
+        .string()
+        .min(5)
+        .max(255)
+        .email()
+        .required(),
+      password: yup
+        .string()
+        .min(6)
+        .max(50)
+        .required(),
+    });
+
+    return schema.isValid(user);
+  }
+
+  checkPassword(password) {
+    return bcrypt.compare(password, this.password_hash);
+  }
 }
 
 export default User;
