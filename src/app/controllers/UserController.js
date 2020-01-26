@@ -24,12 +24,12 @@ class UserController {
   }
 
   async update(req, res) {
-    if (!(await User.validateUserUpdate(req.body)))
-      return res.status(400).json({ error: 'Validation Failed.' });
+    // if (!(await User.validateUserUpdate(req.body)))
+    //   return res.status(400).json({ error: 'Validation Failed.' });
 
-    const { id } = req.params;
-    const user = await User.findByPk(id);
-    if (!user) return res.status(400).json({ error: 'Invalid User ID.' });
+    // const { id } = req.params;
+    // const user = await User.findByPk(id);
+    // if (!user) return res.status(400).json({ error: 'Invalid User ID.' });
 
     return res.json({ update: true });
   }
