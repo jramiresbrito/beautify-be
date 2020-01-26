@@ -16,7 +16,10 @@ class UserController {
   }
 
   async index(req, res) {
+    const { page = 1 } = req.query;
     const users = await User.findAll({
+      limit: 5,
+      offset: (page - 1) * 5,
       attributes: ['id', 'name', 'email', 'provider'],
     });
 
