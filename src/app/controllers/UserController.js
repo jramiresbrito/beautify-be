@@ -2,7 +2,18 @@ import User from '../models/User';
 
 class UserController {
   async show(req, res) {
-    return res.json({ show: true });
+    const { id } = req.params;
+
+    const user = await User.findByPk(id);
+
+    if (!user)
+      return res
+        .status(400)
+        .json({ error: 'The User with the given ID was not found.' });
+
+    const { name, email, provider } = user;
+
+    return res.json({ id, name, email, provider });
   }
 
   async index(req, res) {
@@ -24,14 +35,27 @@ class UserController {
   }
 
   async update(req, res) {
-    // if (!(await User.validateUserUpdate(req.body)))
-    //   return res.status(400).json({ error: 'Validation Failed.' });
+    if (!(await User.validateUserUpdate(req.body)))
+      return res.status(400).json({ error: 'Validation Failed.' });
 
-    // const { id } = req.params;
-    // const user = await User.findByPk(id);
-    // if (!user) return res.status(400).json({ error: 'Invalid User ID.' });
+    const user = await User.findByPk(req.userId);
+    if (!user) return res.status(400).json({ error: 'Invalid User ID.' });
 
-    return res.json({ update: true });
+    const { email, oldPassword, password } = req.body;
+    if (email && email !== user.email) {
+      const emailInUse = await User.findOne({ where: { email } });
+      if (emailInUse) return res.status(400).json({ error: 'E-mail in use.' });
+    }
+
+    if (password && !oldPassword)
+      return res.status(400).json({ error: 'Old Password is required.' });
+
+    if (oldPassword && !(await user.checkPassword(oldPassword)))
+      return res.status(401).json({ error: 'Old Password does not match.' });
+
+    const { id, name, provider } = await user.update(req.body);
+
+    return res.json({ id, name, email, provider });
   }
 
   async delete(req, res) {
