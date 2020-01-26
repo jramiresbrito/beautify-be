@@ -17,7 +17,11 @@ class UserController {
   }
 
   async index(req, res) {
-    return res.json({ index: true });
+    const users = await User.findAll({
+      attributes: ['id', 'name', 'email', 'provider'],
+    });
+
+    return res.json(users);
   }
 
   async create(req, res) {
@@ -56,10 +60,6 @@ class UserController {
     const { id, name, provider } = await user.update(req.body);
 
     return res.json({ id, name, email, provider });
-  }
-
-  async delete(req, res) {
-    return res.json({ delete: true });
   }
 }
 
