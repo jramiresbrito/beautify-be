@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import UserController from './app/controllers/UserController';
+import ProviderController from './app/controllers/ProviderController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FIleController';
 
@@ -17,6 +18,8 @@ routes.post('/users', UserController.create);
 routes.put('/users', authMiddleware, UserController.update);
 // SESSIONS API
 routes.post('/sessions', SessionController.create);
+// PROVIDERS API
+routes.get('/providers', authMiddleware, ProviderController.index);
 // FILE API
 routes.post(
   '/files',
@@ -24,4 +27,5 @@ routes.post(
   upload.single('file'),
   FileController.create
 );
+
 export default routes;

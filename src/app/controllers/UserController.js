@@ -4,9 +4,7 @@ import File from '../models/File';
 class UserController {
   async show(req, res) {
     const { id } = req.params;
-
     const user = await User.findByPk(id);
-
     if (!user)
       return res
         .status(400)
