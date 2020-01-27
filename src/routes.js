@@ -30,6 +30,7 @@ routes.post('/appointments', authMiddleware, AppointmentController.create);
 routes.get('/schedule', authMiddleware, ScheduleController.index);
 // NOTIFICATION API
 routes.get('/notifications', authMiddleware, NotificationController.index);
+routes.put('/notifications/:id', authMiddleware, NotificationController.update);
 // FILE API
 routes.post(
   '/files',
