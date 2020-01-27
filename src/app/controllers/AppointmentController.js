@@ -1,4 +1,4 @@
-import { isBefore, startOfHour, parseISO, format } from 'date-fns';
+import { isBefore, startOfHour, parseISO, format, subHours } from 'date-fns';
 import pt_br from 'date-fns/locale/pt-BR';
 import Appointment from '../models/Appointment';
 import User from '../models/User';
@@ -89,6 +89,33 @@ class AppointmentController {
     });
 
     return res.json({ id, user_id, provider_id, date });
+  }
+
+  async delete(req, res) {
+    const { id } = req.params;
+    const appointment = await Appointment.findByPk(id);
+
+    // Check the appointment property
+    if (appointment.user_id !== req.userId)
+      return res.status(401).json({
+        error: "You don't have permission to cancel this appointment.",
+      });
+
+    // Check appointment limit hour for appointment cancelation
+    const subDate = subHours(appointment.date, 2);
+    if (isBefore(subDate, new Date()))
+      return res.status(401).json({
+        error:
+          'Appointments can only be canceled with a range of 2 hours at least.',
+      });
+
+    appointment.canceled_at = new Date();
+
+    await appointment.save();
+
+    const { user_id, provider_id, date, canceled_at } = appointment;
+
+    return res.json({ id, user_id, provider_id, date, canceled_at });
   }
 }
 

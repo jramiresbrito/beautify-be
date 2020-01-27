@@ -26,6 +26,11 @@ routes.get('/providers', authMiddleware, ProviderController.index);
 // APPOINTMENT API
 routes.get('/appointments', authMiddleware, AppointmentController.index);
 routes.post('/appointments', authMiddleware, AppointmentController.create);
+routes.delete(
+  '/appointments/:id',
+  authMiddleware,
+  AppointmentController.delete
+);
 // SCHEDULE API
 routes.get('/schedule', authMiddleware, ScheduleController.index);
 // NOTIFICATION API
