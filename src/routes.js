@@ -4,6 +4,7 @@ import UserController from './app/controllers/UserController';
 import ProviderController from './app/controllers/ProviderController';
 import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FIleController';
+import AppointmentController from './app/controllers/AppointmentController';
 
 import authMiddleware from './app/middlewares/auth';
 import multerConfig from './config/multer';
@@ -20,6 +21,8 @@ routes.put('/users', authMiddleware, UserController.update);
 routes.post('/sessions', SessionController.create);
 // PROVIDERS API
 routes.get('/providers', authMiddleware, ProviderController.index);
+// APPOINTMENT API
+routes.post('/appointments', authMiddleware, AppointmentController.create);
 // FILE API
 routes.post(
   '/files',
