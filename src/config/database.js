@@ -1,7 +1,7 @@
 require('dotenv/config');
 
 module.exports = {
-  dialect: process.env.DIALECT,
+  dialect: process.env.SQL_DIALECT,
   host: process.env.SQL_HOST_URL,
   username: process.env.SQL_USERNAME,
   password: process.env.SQL_PASSWORD,
