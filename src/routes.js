@@ -6,6 +6,7 @@ import SessionController from './app/controllers/SessionController';
 import FileController from './app/controllers/FIleController';
 import AppointmentController from './app/controllers/AppointmentController';
 import ScheduleController from './app/controllers/ScheduleController';
+import NotificationController from './app/controllers/NotificationController';
 
 import authMiddleware from './app/middlewares/auth';
 import multerConfig from './config/multer';
@@ -27,6 +28,8 @@ routes.get('/appointments', authMiddleware, AppointmentController.index);
 routes.post('/appointments', authMiddleware, AppointmentController.create);
 // SCHEDULE API
 routes.get('/schedule', authMiddleware, ScheduleController.index);
+// NOTIFICATION API
+routes.get('/notifications', authMiddleware, NotificationController.index);
 // FILE API
 routes.post(
   '/files',

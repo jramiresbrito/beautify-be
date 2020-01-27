@@ -39,12 +39,18 @@ class AppointmentController {
 
     const { provider_id, date } = req.body;
 
+    // Check if the given ID corresponds to a Provider
     const isProvider = await User.findOne({ where: { id: provider_id } });
-
     if (!isProvider)
       return res
         .status(401)
         .json({ error: 'The Provider with the given ID was not found.' });
+
+    // Check if the user is trying to make appointment to himself.
+    if (req.userId === provider_id)
+      return res
+        .status(400)
+        .json({ error: 'You cannot make appointments to yourself.' });
 
     // Check for past dates
     const hourStart = startOfHour(parseISO(date));
@@ -69,6 +75,7 @@ class AppointmentController {
       provider_id,
       date: hourStart,
     });
+    const { id, user_id } = appointment;
 
     const user = await User.findByPk(req.userId);
     const formatedDate = format(hourStart, "'dia' dd 'de' MMMM', às' H:mm'h'", {
@@ -81,7 +88,7 @@ class AppointmentController {
       user: provider_id,
     });
 
-    return res.json(appointment);
+    return res.json({ id, user_id, provider_id, date });
   }
 }
 
