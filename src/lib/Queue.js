@@ -13,7 +13,7 @@ class Queue {
   init() {
     jobs.forEach(({ key, handle }) => {
       this.queues[key] = {
-        queue: new Bee(key, {
+        bee: new Bee(key, {
           redis: redisConfig,
         }),
         handle,
@@ -22,15 +22,19 @@ class Queue {
   }
 
   add(queue, job) {
-    return this.queues[queue].queue.createJob(job).save();
+    return this.queues[queue].bee.createJob(job).save();
   }
 
   processQueue() {
     jobs.forEach(job => {
-      const { queue, handle } = this.queues[job.key];
+      const { bee, handle } = this.queues[job.key];
 
-      queue.process(handle);
+      bee.on('failed', this.handleFailure).process(handle);
     });
+  }
+
+  handleFailure(job, err) {
+    console.info(`Queue ${job.queue.name}: FAILED`, err);
   }
 }
 
