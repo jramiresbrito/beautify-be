@@ -34,6 +34,7 @@
   },
   "scripts": {
     "start": "nodemon src/server.js",
+    "queue": "nodemon src/queue.js",
     "debug": "nodemon --inspect src/server.js"
   }
 }

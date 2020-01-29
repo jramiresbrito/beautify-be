@@ -4,7 +4,8 @@ import Appointment from '../models/Appointment';
 import User from '../models/User';
 import File from '../models/File';
 import Notification from '../schemas/Notification';
-import Mail from '../../lib/Mail';
+import Queue from '../../lib/Queue';
+import CancellationMail from '../jobs/CancellationMail';
 
 class AppointmentController {
   async index(req, res) {
@@ -93,8 +94,7 @@ class AppointmentController {
   }
 
   async delete(req, res) {
-    const { id } = req.params;
-    const appointment = await Appointment.findByPk(id, {
+    const appointment = await Appointment.findByPk(req.params.id, {
       include: [
         {
           model: User,
@@ -127,7 +127,12 @@ class AppointmentController {
 
     await appointment.save();
 
-    const { user_id, provider_id, date, canceled_at } = appointment;
+    const { id, user_id, provider_id, date, canceled_at } = appointment;
+
+    // Add a new cancellation mail to jobs pipeline.
+    await Queue.add(CancellationMail.key, {
+      appointment,
+    });
 
     return res.json({ id, user_id, provider_id, date, canceled_at });
   }
